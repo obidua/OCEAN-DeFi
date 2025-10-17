@@ -153,8 +153,16 @@ export default function Layout() {
             </div>
 
             <button
+              onClick={generateOceanDefiPDF}
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all hover:bg-cyan-500/10 text-cyan-400 border border-transparent hover:border-cyan-500/30 group"
+            >
+              <FileDown size={20} className="group-hover:animate-pulse" />
+              <span className="text-sm font-medium flex-1">Download PDF</span>
+            </button>
+
+            <button
               onClick={handleDisconnect}
-              className="w-full flex items-center gap-3 px-4 py-3 mt-2 rounded-lg transition-all hover:bg-red-500/10 text-red-400 border border-transparent hover:border-red-500/30 group"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all hover:bg-red-500/10 text-red-400 border border-transparent hover:border-red-500/30 group"
             >
               <LogOut size={20} className="group-hover:animate-pulse" />
               <span className="text-sm font-medium flex-1">Disconnect</span>

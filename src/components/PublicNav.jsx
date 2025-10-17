@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Waves, Menu, X, FileDown } from 'lucide-react';
-import { generateOceanDefiPDF } from '../utils/generatePDF';
+import { Waves, Menu, X } from 'lucide-react';
 
 export default function PublicNav() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -191,16 +190,6 @@ export default function PublicNav() {
                 )}
               </div>
 
-              <button
-                onClick={() => {
-                  generateOceanDefiPDF();
-                  setMobileMenuOpen(false);
-                }}
-                className="mx-4 px-6 py-3 cyber-glass border border-neon-green/30 text-neon-green rounded-lg font-bold hover:bg-neon-green/10 transition-all flex items-center justify-center gap-2"
-              >
-                <FileDown size={20} />
-                Download PDF
-              </button>
               <Link
                 to="/login"
                 onClick={() => setMobileMenuOpen(false)}
