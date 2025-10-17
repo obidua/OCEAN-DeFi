@@ -142,12 +142,6 @@ export default function Layout() {
           </div>
 
           <div className="space-y-2 border-t border-cyan-500/30 pt-3">
-            <div className="lg:hidden flex items-center gap-2 px-4 py-2 cyber-glass rounded-lg border border-cyan-500/30">
-              <div className="w-2 h-2 bg-neon-green rounded-full animate-pulse shadow-neon-green flex-shrink-0" />
-              <span className="text-xs font-medium text-cyan-400 uppercase">RAMA:</span>
-              <span className="text-xs font-bold text-neon-green">${ramaPrice.toFixed(4)}</span>
-            </div>
-
             <div className="lg:hidden px-4 py-2 bg-gradient-to-r from-cyan-500 to-neon-green text-dark-950 rounded-lg text-xs font-bold text-center shadow-neon-cyan">
               0x1234...5678
             </div>
@@ -167,14 +161,6 @@ export default function Layout() {
               <LogOut size={20} className="group-hover:animate-pulse" />
               <span className="text-sm font-medium flex-1">Disconnect</span>
             </button>
-
-            <button
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all bg-green-500/10 text-green-400 border  border-green-500/30 group"
-            >
-              <span className="text-sm font-medium flex-1">Version :1.03</span>
-            </button>
-
-
           </div>
         </nav>
       </aside>
