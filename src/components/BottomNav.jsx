@@ -19,8 +19,8 @@ export default function BottomNav({ onMoreClick }) {
   };
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden safe-area-bottom">
-      <div className="cyber-glass border-t border-cyan-500/30 backdrop-blur-xl">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 lg:hidden safe-area-bottom" style={{ position: '-webkit-sticky', WebkitTransform: 'translateZ(0)', transform: 'translateZ(0)' }}>
+      <div className="cyber-glass border-t border-cyan-500/30 backdrop-blur-xl" style={{ WebkitBackdropFilter: 'blur(12px)' }}>
         <div className="absolute inset-x-0 top-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent" />
 
         <div className="grid grid-cols-5 h-16">

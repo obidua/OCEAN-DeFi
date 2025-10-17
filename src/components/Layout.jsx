@@ -12,10 +12,10 @@ export default function Layout() {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen bg-dark-950 cyber-grid-bg relative overflow-hidden">
+    <div className="h-full bg-dark-950 cyber-grid-bg relative flex flex-col overflow-hidden">
       <div className="fixed inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-neon-green/5 pointer-events-none" />
 
-      <main className="pb-20 relative z-10">
+      <main className="flex-1 relative z-10 overflow-y-auto overflow-x-hidden pb-20" style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'none' }}>
         <div className="p-4 lg:p-8">
           <Outlet />
         </div>
