@@ -1,4 +1,4 @@
-import{b as f,i as a,x as d,a as p}from"./web3-DYhSQgdA.js";import"./index-COWLB7hO.js";import"./charts-BK1r30At.js";import"./vendor-CpL4RcAy.js";const u=f`
+import{b as f,i as a,x as d,a as p}from"./web3-BUWRdaQP.js";import"./index-030keZS_.js";import"./charts-BK1r30At.js";import"./vendor-CpL4RcAy.js";const u=f`
   :host > wui-flex:first-child {
     height: 500px;
     overflow-y: auto;

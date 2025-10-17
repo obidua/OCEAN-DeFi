@@ -1,7 +1,7 @@
 {
-  "name": "Ocean DeFi - Validator-Backed Ecosystem",
+  "name": "Ocean DeFi - Validator-Backed DeFi Platform on Ramestta Blockchain",
   "short_name": "Ocean DeFi",
-  "description": "Decentralized finance platform built on Ramestta blockchain with validator-backed security and sustainable returns",
+  "description": "Stake RAMA tokens and earn sustainable rewards through Ocean DeFi's validator-backed ecosystem. Experience secure decentralized finance with transparent smart contracts, real-time analytics, slab income, royalty programs, and team network commissions.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#0a0f1e",
@@ -18,9 +18,27 @@
       "purpose": "any"
     },
     {
-      "src": "/icon.svg",
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
       "sizes": "512x512",
-      "type": "image/svg+xml",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
       "purpose": "maskable"
     }
   ],
@@ -28,32 +46,48 @@
     {
       "name": "Dashboard",
       "short_name": "Dashboard",
-      "description": "View your portfolio dashboard",
+      "description": "View your portfolio dashboard with real-time analytics",
       "url": "/dashboard",
-      "icons": [{ "src": "/icon.svg", "sizes": "any" }]
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Stake & Invest",
       "short_name": "Stake",
-      "description": "Stake your RAMA tokens",
+      "description": "Stake your RAMA tokens and earn rewards",
       "url": "/dashboard/stake",
-      "icons": [{ "src": "/icon.svg", "sizes": "any" }]
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Claim Earnings",
       "short_name": "Earnings",
-      "description": "Claim your daily earnings",
+      "description": "Claim your daily earnings and rewards",
       "url": "/dashboard/earnings",
-      "icons": [{ "src": "/icon.svg", "sizes": "any" }]
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     },
     {
       "name": "Portfolio",
       "short_name": "Portfolio",
-      "description": "View your portfolio overview",
+      "description": "View your portfolio overview and staking details",
       "url": "/dashboard/portfolio",
-      "icons": [{ "src": "/icon.svg", "sizes": "any" }]
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Team Network",
+      "short_name": "Team",
+      "description": "View your team network and commissions",
+      "url": "/dashboard/team",
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192" }]
     }
   ],
-  "categories": ["finance", "productivity", "business"],
-  "prefer_related_applications": false
+  "categories": ["finance", "productivity", "business", "utilities"],
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "screenshots": [
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide"
+    }
+  ]
 }
