@@ -1,4 +1,4 @@
-import{c as l,r as p,e as h,a as b,i as y,x as f}from"./web3-BUWRdaQP.js";import{n as r,o as v}from"./index-030keZS_.js";const w=l`
+import{c as l,r as p,e as h,a as b,i as y,x as f}from"./web3-D16o4WFR.js";import{n as r,o as v}from"./index-B_o_9Sdi.js";const w=l`
   :host {
     position: relative;
   }
