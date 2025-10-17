@@ -77,27 +77,27 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-dark-950 cyber-grid-bg relative flex items-center justify-center p-4 overflow-hidden">
+    <div className="min-h-screen bg-dark-950 cyber-grid-bg relative flex items-center justify-center p-4 sm:p-6 overflow-hidden">
       <div className="fixed inset-0 bg-gradient-to-br from-cyan-500/10 via-transparent to-neon-green/10 pointer-events-none" />
       <div className="fixed inset-0 scan-lines pointer-events-none opacity-30" />
       <div className="w-full max-w-md relative z-10">
-        <div className="text-center mb-8">
+        <div className="text-center mb-6 sm:mb-8">
           <Link to="/" className="inline-flex items-center gap-2 mb-4">
-            <div className="w-14 h-14 bg-gradient-to-br from-cyan-500 to-neon-green rounded-xl flex items-center justify-center shadow-neon-cyan animate-glow-pulse relative">
+            <div className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-cyan-500 to-neon-green rounded-xl flex items-center justify-center shadow-neon-cyan animate-glow-pulse relative">
               <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-neon-green rounded-xl blur-xl opacity-60" />
-              <Waves className="text-dark-950 relative z-10" size={32} />
+              <Waves className="text-dark-950 relative z-10" size={28} />
             </div>
           </Link>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-cyan-400 to-neon-green bg-clip-text text-transparent mb-2 text-neon-glow">
+          <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-cyan-400 to-neon-green bg-clip-text text-transparent mb-2 text-neon-glow">
             OCEAN DeFi
           </h1>
-          <p className="text-cyan-300/90 uppercase tracking-widest text-sm">Built on Ramestta</p>
-          <Link to="/" className="text-cyan-400 hover:text-neon-green text-sm mt-2 inline-block transition-colors">← Back to Home</Link>
+          <p className="text-cyan-300/90 uppercase tracking-widest text-xs sm:text-sm">Built on Ramestta</p>
+          <Link to="/" className="text-cyan-400 hover:text-neon-green text-xs sm:text-sm mt-2 inline-block transition-colors">← Back to Home</Link>
         </div>
 
-        <div className="cyber-glass rounded-2xl shadow-neon-cyan border border-cyan-500/30 p-8 relative overflow-hidden hover-glow-cyan">
+        <div className="cyber-glass rounded-2xl shadow-neon-cyan border border-cyan-500/30 p-6 sm:p-8 relative overflow-hidden hover-glow-cyan">
           <div className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-500/70 to-transparent" />
-          <h2 className="text-2xl font-bold text-cyan-300 mb-6 uppercase tracking-wide">Welcome Back</h2>
+          <h2 className="text-xl sm:text-2xl font-bold text-cyan-300 mb-6 uppercase tracking-wide">Welcome Back</h2>
 
           {error && (
             <div className="mb-4 p-4 cyber-glass border border-red-500/50 rounded-xl flex items-start gap-3 shadow-lg">
@@ -109,7 +109,7 @@ export default function Login() {
           <button
             onClick={handleConnectWallet}
             disabled={isConnecting}
-            className="w-full py-4 px-6 bg-gradient-to-r from-cyan-500 to-neon-green text-dark-950 rounded-xl font-bold hover:shadow-neon-cyan transition-all flex items-center justify-center gap-3 mb-6 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] uppercase tracking-wide relative overflow-hidden group"
+            className="w-full py-3 sm:py-4 px-4 sm:px-6 bg-gradient-to-r from-cyan-500 to-neon-green text-dark-950 rounded-xl font-bold hover:shadow-neon-cyan transition-all flex items-center justify-center gap-2 sm:gap-3 mb-6 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-[1.02] uppercase tracking-wide text-sm sm:text-base relative overflow-hidden group"
           >
             <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-neon-green opacity-0 group-hover:opacity-100 transition-opacity" />
             <Wallet size={20} className="relative z-10" />
@@ -126,11 +126,11 @@ export default function Login() {
           </div>
 
           <form onSubmit={handleViewById}>
-            <label className="block text-sm font-medium text-cyan-400 mb-2 uppercase tracking-wide">
+            <label className="block text-sm font-medium text-cyan-400 mb-3 uppercase tracking-wide">
               View Dashboard by ID
             </label>
-            <div className="flex gap-2">
-              <div className="flex-1 relative">
+            <div className="space-y-3">
+              <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-cyan-400/50" size={20} />
                 <input
                   type="text"
@@ -143,7 +143,7 @@ export default function Login() {
               <button
                 type="submit"
                 disabled={!userId.trim()}
-                className="px-6 py-3 cyber-glass border border-cyan-500/50 text-cyan-400 rounded-xl font-bold hover:bg-cyan-500/10 hover:shadow-neon-cyan transition-all flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed uppercase"
+                className="w-full px-6 py-3 cyber-glass border border-cyan-500/50 text-cyan-400 rounded-xl font-bold hover:bg-cyan-500/10 hover:shadow-neon-cyan transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed uppercase"
               >
                 View
                 <ArrowRight size={18} />
@@ -151,7 +151,7 @@ export default function Login() {
             </div>
           </form>
 
-          <p className="text-center text-sm text-cyan-300/90 mt-6">
+          <p className="text-center text-xs sm:text-sm text-cyan-300/90 mt-6">
             New to OCEAN DeFi?{' '}
             <button
               onClick={() => navigate('/signup')}
@@ -162,7 +162,7 @@ export default function Login() {
           </p>
         </div>
 
-        <p className="text-center text-xs text-cyan-400/50 mt-6 uppercase tracking-widest">
+        <p className="text-center text-xs text-cyan-400/50 mt-4 sm:mt-6 uppercase tracking-widest px-4">
           Validator-Backed Staking Ecosystem
         </p>
       </div>
