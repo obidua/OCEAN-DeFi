@@ -1,0 +1,59 @@
+{
+  "name": "Ocean DeFi - Validator-Backed Ecosystem",
+  "short_name": "Ocean DeFi",
+  "description": "Decentralized finance platform built on Ramestta blockchain with validator-backed security and sustainable returns",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0f1e",
+  "theme_color": "#00f0ff",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-US",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "short_name": "Dashboard",
+      "description": "View your portfolio dashboard",
+      "url": "/dashboard",
+      "icons": [{ "src": "/icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Stake & Invest",
+      "short_name": "Stake",
+      "description": "Stake your RAMA tokens",
+      "url": "/dashboard/stake",
+      "icons": [{ "src": "/icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Claim Earnings",
+      "short_name": "Earnings",
+      "description": "Claim your daily earnings",
+      "url": "/dashboard/earnings",
+      "icons": [{ "src": "/icon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Portfolio",
+      "short_name": "Portfolio",
+      "description": "View your portfolio overview",
+      "url": "/dashboard/portfolio",
+      "icons": [{ "src": "/icon.svg", "sizes": "any" }]
+    }
+  ],
+  "categories": ["finance", "productivity", "business"],
+  "prefer_related_applications": false
+}
