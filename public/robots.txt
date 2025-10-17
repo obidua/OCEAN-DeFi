@@ -1,0 +1,17 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://oceandefi.app/sitemap.xml
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+Disallow: /api/
+Disallow: /*.json$
+Disallow: /sw.js
