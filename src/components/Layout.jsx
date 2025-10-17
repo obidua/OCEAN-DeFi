@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import BottomNav from './BottomNav';
+import MoreMenu from './MoreMenu';
 import {
   LayoutDashboard,
   Wallet,
@@ -42,6 +44,7 @@ const navItems = [
 
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [moreMenuOpen, setMoreMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const ramaPrice = 0.0245;
@@ -172,11 +175,14 @@ export default function Layout() {
         />
       )}
 
-      <main className="lg:ml-64 pt-16 relative z-10">
+      <main className="lg:ml-64 pt-16 pb-20 lg:pb-0 relative z-10">
         <div className="p-4 lg:p-8">
           <Outlet />
         </div>
       </main>
+
+      <BottomNav onMoreClick={() => setMoreMenuOpen(true)} />
+      <MoreMenu isOpen={moreMenuOpen} onClose={() => setMoreMenuOpen(false)} />
     </div>
   );
 }
