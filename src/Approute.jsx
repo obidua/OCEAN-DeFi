@@ -11,6 +11,7 @@ import SlabIncome from './pages/SlabIncome';
 import RoyaltyProgram from './pages/RoyaltyProgram';
 import OneTimeRewards from './pages/OneTimeRewards';
 import SafeWallet from './pages/SafeWallet';
+import TransactionHistory from './pages/TransactionHistory';
 import Analytics from './pages/Analytics';
 import About from './pages/About';
 import Settings from './pages/Settings';
@@ -61,6 +62,7 @@ const Approute = () => {
           <Route path="royalty" element={<RoyaltyProgram />} />
           <Route path="rewards" element={<OneTimeRewards />} />
           <Route path="safe-wallet" element={<SafeWallet />} />
+          <Route path="transaction-history" element={<TransactionHistory />} />
           <Route path="analytics" element={<Analytics />} />
           <Route path="about" element={<About />} />
           <Route path="presentation" element={<Presentation />} />

@@ -17,7 +17,8 @@ import {
   LogOut,
   FileDown,
   Presentation,
-  BookOpen
+  BookOpen,
+  History
 } from 'lucide-react';
 import { generateOceanDefiPDF } from '../utils/generatePDF';
 
@@ -31,6 +32,7 @@ const navItems = [
   { path: '/dashboard/earnings', label: 'Claim Earnings', icon: TrendingUp },
   { path: '/dashboard/team', label: 'Team Network', icon: Users },
   { path: '/dashboard/safe-wallet', label: 'Safe Wallet', icon: Vault },
+  { path: '/dashboard/transaction-history', label: 'Transaction History', icon: History },
   { path: '/dashboard/presentation', label: 'Presentation', icon: Presentation },
   { path: '/dashboard/analytics', label: 'Analytics', icon: TrendingUp },
   { path: '/dashboard/about', label: 'About & Vision', icon: Info },
