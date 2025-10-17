@@ -15,7 +15,7 @@ export default function Layout() {
     <div className="h-full bg-dark-950 cyber-grid-bg relative flex flex-col overflow-hidden">
       <div className="fixed inset-0 bg-gradient-to-br from-cyan-500/5 via-transparent to-neon-green/5 pointer-events-none" />
 
-      <main className="flex-1 relative z-10 overflow-y-auto overflow-x-hidden pb-20" style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'none' }}>
+      <main className="flex-1 relative z-10 overflow-y-auto overflow-x-hidden pb-24" style={{ WebkitOverflowScrolling: 'touch', overscrollBehavior: 'none' }}>
         <div className="p-4 lg:p-8">
           <Outlet />
         </div>

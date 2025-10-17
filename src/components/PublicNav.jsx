@@ -7,9 +7,9 @@ export default function PublicNav() {
   const [learnMenuOpen, setLearnMenuOpen] = useState(false);
 
   return (
-    <nav className="fixed top-0 w-full z-50 cyber-glass border-b border-cyan-500/20 backdrop-blur-md">
+    <nav className="fixed top-0 w-full z-50 cyber-glass border-b border-cyan-500/20 backdrop-blur-md safe-area-top">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-16 sm:h-16">
           <Link to="/" className="flex items-center gap-2">
             <Waves className="text-cyan-400" size={28} />
             <span className="text-xl md:text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-neon-green">
