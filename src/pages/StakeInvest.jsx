@@ -31,10 +31,10 @@ export default function StakeInvest() {
   const selectedWalletBalance = useWallet === 'external' ? connectedWalletBalance : safeWalletBalance;
   const selectedWalletBalanceUSD = selectedWalletBalance * ramaPrice;
   const isSufficientBalance = stakeValue > 0 && selectedWalletBalanceUSD >= stakeValue;
-  const isMinimumMet = stakeValue >= 50;
+  const isMinimumMet = stakeValue >= 10;
   const canStake = isMinimumMet && isSufficientBalance && (stakeType === 'self' || addressValidation?.isValid);
 
-  const quickAmounts = [50, 100, 500, 1000, 5000, 10000];
+  const quickAmounts = [10, 50, 100, 500, 1000, 5000];
 
   useEffect(() => {
     if (stakeType === 'other' && beneficiaryAddress.trim().length > 10) {
@@ -119,7 +119,7 @@ export default function StakeInvest() {
                   <label className="block text-sm font-medium text-cyan-400 uppercase tracking-wide">
                     Stake Amount
                   </label>
-                  <Tooltip content="Minimum $50 to activate. Tier 2 benefits start at $5,010">
+                  <Tooltip content="Minimum $10 to activate. Tier 2 benefits start at $5,010">
                     <HelpCircle size={16} className="text-cyan-400/60 cursor-help" />
                   </Tooltip>
                 </div>
@@ -172,7 +172,7 @@ export default function StakeInvest() {
                   <div className="mt-3 p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-start gap-2">
                     <AlertCircle className="text-red-400 flex-shrink-0 mt-0.5" size={16} />
                     <p className="text-sm text-red-300">
-                      Minimum stake is $50. You need ${(50 - stakeValue).toFixed(2)} more.
+                      Minimum stake is $10. You need ${(10 - stakeValue).toFixed(2)} more.
                     </p>
                   </div>
                 )}
@@ -364,7 +364,7 @@ export default function StakeInvest() {
 
               {!canStake && stakeValue > 0 && (
                 <div className="text-xs text-cyan-300/70 text-center space-y-1">
-                  {!isMinimumMet && <p>• Minimum stake: $50</p>}
+                  {!isMinimumMet && <p>• Minimum stake: $10</p>}
                   {!isSufficientBalance && <p>• Insufficient balance in selected wallet</p>}
                   {stakeType === 'other' && !addressValidation?.isValid && <p>• Valid beneficiary address required</p>}
                 </div>
@@ -397,7 +397,7 @@ export default function StakeInvest() {
                     </div>
                     <h4 className="font-semibold text-cyan-300 mb-2">Enter Amount</h4>
                     <p className="text-sm text-cyan-300/80">
-                      Enter your desired stake amount in USD (minimum $50). Use quick buttons for common amounts.
+                      Enter your desired stake amount in USD (minimum $10). Use quick buttons for common amounts.
                     </p>
                   </div>
 
@@ -438,7 +438,7 @@ export default function StakeInvest() {
                     Important Notes
                   </h4>
                   <ul className="space-y-1 text-sm text-cyan-300/90">
-                    <li>• Minimum stake amount is $50 for portfolio activation</li>
+                    <li>• Minimum stake amount is $10 for portfolio activation</li>
                     <li>• Tier 2 benefits (0.40% daily) unlock at $5,010+</li>
                     <li>• Staking for others requires valid wallet address or user ID</li>
                     <li>• Safe Wallet has no withdrawal fees or commission charges</li>
@@ -541,7 +541,7 @@ export default function StakeInvest() {
               <div>
                 <p className="text-sm font-medium text-red-300 uppercase tracking-wide">Minimum Stake Required</p>
                 <p className="text-xs text-red-400/70 mt-1">
-                  The minimum activation amount is $50
+                  The minimum activation amount is $10
                 </p>
               </div>
             </div>
