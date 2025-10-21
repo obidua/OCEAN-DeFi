@@ -1,0 +1,537 @@
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+/**
+ * @title OceanViewV2
+ * @notice Read-only façade that aggregates data from the live OCEAN DeFi stack
+ *         (CoreConfig, PortfolioManager, OceanQueryUpgradeable, OceanViewUpgradeable, SafeWallet, etc.).
+ *         Intended for dApp queries on Ramestta — provides a single contract that
+ *         returns all dashboard / portfolio / income data needed by the React UI.
+ *
+ *         All functions are view only. No state is mutated.
+ */
+
+import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
+
+import "./interfaces/ICoreConfig.sol";
+import "./interfaces/IUserRegistry.sol";
+import "./interfaces/IPortfolioManager.sol";
+import "./interfaces/ISlabManager.sol";
+import "./interfaces/ISafeWallet.sol";
+import "./interfaces/IRamaOracle.sol";
+
+interface IOceanQueryUpgradeable {
+    function getIncomeStreamTotals(
+        address user
+    )
+        external
+        view
+        returns (
+            uint256 growthUsd,
+            uint256 slabUsd,
+            uint256 royaltyUsd,
+            uint256 overrideUsd,
+            uint256 rewardsUsd
+        );
+
+    function getTotalClaimableIncome(
+        address user
+    ) external view returns (uint256 sum);
+
+    function getPortfolioGrowthIncome(
+        address user
+    ) external view returns (uint256);
+
+    function getSlabIncome(address user) external view returns (uint256);
+
+    function getSlabIncomeAvailable(
+        address user
+    ) external view returns (uint256 amount);
+
+    function getRoyaltyIncome(address user) external view returns (uint256);
+
+    function getSameSlabOverrideIncome(
+        address user
+    ) external view returns (uint256);
+
+    function getSameSlabOverrideEarnings(
+        address user
+    ) external view returns (uint256 l1, uint256 l2, uint256 l3);
+
+    function getOneTimeRewardIncome(
+        address user
+    ) external view returns (uint256);
+
+    function getSafeWalletBalance(
+        address user
+    ) external view returns (uint256 ramaBalance);
+
+    function getAccruedGrowth(
+        address user
+    ) external view returns (uint256 growthRama);
+
+    function getPortfolioCapProgress(
+        uint256 pid
+    ) external view returns (uint256 bps);
+
+    function getLifetimeCapProgress(
+        address user
+    ) external view returns (uint256 bps);
+
+    function getDailyGrowthRate(
+        uint256 pid
+    ) external view returns (uint256 dailyRateWad);
+
+    function canClaimRoyalty(address user) external view returns (bool);
+
+    function getRoyaltyRenewalRequirement(
+        address user
+    ) external view returns (bool paused, uint256 lastT, uint256 nowT);
+
+    function getNextRoyaltyClaimDate(
+        address user
+    ) external view returns (uint64 lastMonthEpoch, uint64 nextMonthEpoch);
+}
+
+interface IOceanViewLegacy {
+    struct UserOverview {
+        uint256 totalStakedRama;
+        uint256 totalStakedUSD;
+        uint256 totalSafeWalletRama;
+        uint256 totalRoiUsdPaid;
+        uint32 directCount;
+        uint256 teamCount;
+        address uplineSponsor;
+        uint8 slabIndex;
+        uint256 qualifiedVolumeUSD;
+        bool slabCanClaim;
+        uint8 royaltyTier;
+        uint64 royaltyLastMonthEpoch;
+        bool royaltyPaused;
+    }
+
+    struct PortfolioSummary {
+        uint256 pid;
+        uint256 principalRama;
+        uint256 principalUSD;
+        uint256 capRama;
+        uint256 creditedRama;
+        uint8 capPct;
+        bool booster;
+        uint8 tier;
+        uint256 dailyRateWad;
+        bool active;
+        uint64 createdAt;
+        uint64 frozenUntil;
+    }
+
+    struct SlabPanel {
+        uint8 slabIndex;
+        uint256 qualifiedVolumeUSD;
+        uint32 directMembers;
+        bool canClaim;
+    }
+
+    struct RoyaltyPanel {
+        uint8 currentLevel;
+        uint64 lastPaidMonthEpoch;
+        bool paused;
+    }
+
+    struct WalletPanel {
+        uint256 safeRama;
+        uint256 lifetimeRoiUsd;
+    }
+
+    function getPortfolioSummaries(
+        address user
+    ) external view returns (PortfolioSummary[] memory);
+
+    function getPortfolioTotals(
+        address user
+    )
+        external
+        view
+        returns (
+            uint256 totalValueUSD,
+            uint256 totalEarnedRama,
+            uint32 directRefs,
+            uint256 qualifiedVolumeUSD,
+            uint8 royaltyLevel
+        );
+
+    function getSlabPanel(
+        address user
+    ) external view returns (SlabPanel memory);
+
+    function getRoyaltyPanel(
+        address user
+    ) external view returns (RoyaltyPanel memory);
+
+    function getWalletPanel(
+        address user
+    ) external view returns (WalletPanel memory);
+
+    function getUserOverview(
+        address user,
+        uint8 teamDepthMax
+    ) external view returns (UserOverview memory);
+
+    function getLast7DaysEarningsUSD(
+        address user,
+        uint32 todayDayId
+    )
+        external
+        view
+        returns (uint32[7] memory dayIds, uint256[7] memory usdAmounts);
+
+    function getTeamNetwork(
+        address user,
+        uint8 maxDepth
+    )
+        external
+        view
+        returns (
+            address[] memory directs,
+            uint32 directCount,
+            uint256 teamCount
+        );
+
+    function getLastTransactions(
+        address user,
+        uint256 limit
+    ) external view returns (bytes[] memory);
+}
+
+contract OceanViewV2 is Initializable, OwnableUpgradeable, UUPSUpgradeable {
+    uint8 internal constant TEAM_DEPTH = 10;
+    ICoreConfig public cfg;
+    IOceanQueryUpgradeable public query;
+    IOceanViewLegacy public legacy;
+
+    function initialize(
+        address _cfg,
+        address _query,
+        address _legacy
+    ) external initializer {
+        __Ownable_init();
+        __UUPSUpgradeable_init();
+        require(
+            _cfg != address(0) && _query != address(0) && _legacy != address(0),
+            "OV2: zero address"
+        );
+        cfg = ICoreConfig(_cfg);
+        query = IOceanQueryUpgradeable(_query);
+        legacy = IOceanViewLegacy(_legacy);
+    }
+
+    function _authorizeUpgrade(address) internal override onlyOwner {}
+
+    /* ---------------------------------------------------------- */
+    /*                    Struct Definitions                      */
+    /* ---------------------------------------------------------- */
+
+    struct DashboardSummary {
+        uint256 totalStakedUsdMicro;
+        uint256 totalEarnedRamaWei;
+        uint256 totalClaimableUsdMicro;
+        uint256 accruedGrowthUsdMicro;
+        uint256 accruedGrowthRamaWei;
+        uint256 qualifiedVolumeUsdMicro;
+        uint32 directRefs;
+        uint256 teamCount;
+        address upline;
+        uint8 slabLevel;
+        bool slabCanClaim;
+        uint8 royaltyLevel;
+        bool royaltyPaused;
+        bool royaltyCanClaim;
+        uint64 royaltyLastMonthEpoch;
+        uint64 royaltyNextMonthEpoch;
+        uint256 royaltyPaidMonths;
+        uint256 royaltyRenewalSnapshotUsd;
+        uint256 royaltyRecentSnapshotUsd;
+    }
+
+    struct IncomeSummary {
+        uint256 totalUsdMicro;
+        uint256 growthUsdMicro;
+        uint256 slabUsdMicro;
+        uint256 slabAvailableUsdMicro;
+        uint256 royaltyUsdMicro;
+        uint256 overrideUsdMicro;
+        uint256 rewardsUsdMicro;
+        uint256[3] overrideWaveUsdMicro;
+    }
+
+    struct WalletSummary {
+        uint256 safeWalletRamaWei;
+        uint256 safeWalletUsdMicro;
+        uint256 lifetimeRoiUsdMicro;
+        uint256 pendingGrowthRamaWei;
+        uint256 pendingGrowthUsdMicro;
+    }
+
+    struct PortfolioCard {
+        uint256 pid;
+        uint256 principalRamaWei;
+        uint256 principalUsdMicro;
+        uint256 capRamaWei;
+        uint256 capUsdMicro;
+        uint256 creditedRamaWei;
+        uint256 creditedUsdMicro;
+        uint256 capProgressBps;
+        uint256 dailyRateWad;
+        uint8 capPct;
+        uint8 tier;
+        bool booster;
+        bool active;
+        uint64 createdAt;
+        uint64 frozenUntil;
+    }
+
+    struct WeeklyEarnings {
+        uint32[7] dayIds;
+        uint256[7] usdAmounts;
+    }
+
+    struct TeamSummary {
+        address[] directs;
+        uint32 directCount;
+        uint256 teamCount;
+    }
+
+    /* ---------------------------------------------------------- */
+    /*                       Core Views                           */
+    /* ---------------------------------------------------------- */
+
+    function getDashboardData(
+        address user,
+        uint32 todayDayId
+    )
+        external
+        view
+        returns (
+            DashboardSummary memory summary,
+            IncomeSummary memory income,
+            WalletSummary memory wallet,
+            PortfolioCard[] memory portfolios,
+            WeeklyEarnings memory weekly,
+            uint256 lifetimeCapBps
+        )
+    {
+        require(user != address(0), "OV2: user zero");
+
+        summary = _buildDashboardSummary(user);
+        income = _buildIncomeSummary(user);
+        wallet = _buildWalletSummary(user);
+        portfolios = _buildPortfolioCards(user);
+        lifetimeCapBps = query.getLifetimeCapProgress(user);
+
+        // Sync derived dashboard fields with income data.
+        summary.totalClaimableUsdMicro = income.totalUsdMicro;
+        summary.accruedGrowthUsdMicro = income.growthUsdMicro;
+        summary.accruedGrowthRamaWei = wallet.pendingGrowthRamaWei;
+
+        if (todayDayId != 0) {
+            (weekly.dayIds, weekly.usdAmounts) = legacy.getLast7DaysEarningsUSD(
+                user,
+                todayDayId
+            );
+        }
+    }
+
+    function getIncomeStreams(
+        address user
+    ) external view returns (IncomeSummary memory income) {
+        require(user != address(0), "OV2: user zero");
+        income = _buildIncomeSummary(user);
+    }
+
+    function getWalletSnapshot(
+        address user
+    ) external view returns (WalletSummary memory wallet) {
+        require(user != address(0), "OV2: user zero");
+        wallet = _buildWalletSummary(user);
+    }
+
+    function getPortfolioCards(
+        address user
+    )
+        external
+        view
+        returns (PortfolioCard[] memory cards, uint256 lifetimeCapBps)
+    {
+        require(user != address(0), "OV2: user zero");
+        cards = _buildPortfolioCards(user);
+        lifetimeCapBps = query.getLifetimeCapProgress(user);
+    }
+
+    function getWeeklyEarnings(
+        address user,
+        uint32 todayDayId
+    ) external view returns (WeeklyEarnings memory weekly) {
+        require(user != address(0), "OV2: user zero");
+        (weekly.dayIds, weekly.usdAmounts) = legacy.getLast7DaysEarningsUSD(
+            user,
+            todayDayId
+        );
+    }
+
+    function getTeamSummary(
+        address user,
+        uint8 depth
+    ) external view returns (TeamSummary memory team) {
+        require(user != address(0), "OV2: user zero");
+        (team.directs, team.directCount, team.teamCount) = legacy
+            .getTeamNetwork(user, depth);
+    }
+
+    function getRecentTransactions(
+        address user,
+        uint256 limit
+    ) external view returns (bytes[] memory entries) {
+        require(user != address(0), "OV2: user zero");
+        entries = legacy.getLastTransactions(user, limit);
+    }
+
+    /* ---------------------------------------------------------- */
+    /*                        Internals                            */
+    /* ---------------------------------------------------------- */
+
+    function _buildDashboardSummary(
+        address user
+    ) internal view returns (DashboardSummary memory summary) {
+        (
+            uint256 totalValueUSD,
+            uint256 totalEarnedRama,
+            uint32 directRefs,
+            uint256 qualifiedVolumeUSD,
+            uint8 royaltyLevel
+        ) = legacy.getPortfolioTotals(user);
+
+        summary.totalStakedUsdMicro = totalValueUSD;
+        summary.totalEarnedRamaWei = totalEarnedRama;
+        summary.qualifiedVolumeUsdMicro = qualifiedVolumeUSD;
+        summary.directRefs = directRefs;
+        summary.royaltyLevel = royaltyLevel;
+
+        IOceanViewLegacy.SlabPanel memory slab = legacy.getSlabPanel(user);
+        summary.slabLevel = slab.slabIndex;
+        summary.slabCanClaim = slab.canClaim;
+        summary.directRefs = slab.directMembers;
+
+        IOceanViewLegacy.RoyaltyPanel memory roy = legacy.getRoyaltyPanel(user);
+        summary.royaltyLevel = roy.currentLevel;
+        summary.royaltyLastMonthEpoch = roy.lastPaidMonthEpoch;
+        summary.royaltyPaused = roy.paused;
+
+        IOceanViewLegacy.UserOverview memory overview = legacy.getUserOverview(
+            user,
+            TEAM_DEPTH
+        );
+        summary.teamCount = overview.teamCount;
+        summary.upline = overview.uplineSponsor;
+
+        summary.royaltyPaidMonths = _tryQueryUint(
+            abi.encodeWithSignature("getRoyaltyPayoutsReceived(address)", user)
+        );
+        summary.royaltyCanClaim = query.canClaimRoyalty(user);
+
+        (bool renewalPaused, uint256 lastSnap, uint256 nowSnap) = query
+            .getRoyaltyRenewalRequirement(user);
+        summary.royaltyRenewalSnapshotUsd = lastSnap;
+        summary.royaltyRecentSnapshotUsd = nowSnap;
+        if (renewalPaused) summary.royaltyPaused = true;
+
+        (uint64 lastMonth, uint64 nextMonth) = query.getNextRoyaltyClaimDate(
+            user
+        );
+        if (lastMonth != 0) summary.royaltyLastMonthEpoch = lastMonth;
+        summary.royaltyNextMonthEpoch = nextMonth;
+    }
+
+    function _buildIncomeSummary(
+        address user
+    ) internal view returns (IncomeSummary memory income) {
+        (
+            income.growthUsdMicro,
+            income.slabUsdMicro,
+            income.royaltyUsdMicro,
+            income.overrideUsdMicro,
+            income.rewardsUsdMicro
+        ) = query.getIncomeStreamTotals(user);
+        income.totalUsdMicro = query.getTotalClaimableIncome(user);
+        income.slabAvailableUsdMicro = query.getSlabIncomeAvailable(user);
+        (
+            income.overrideWaveUsdMicro[0],
+            income.overrideWaveUsdMicro[1],
+            income.overrideWaveUsdMicro[2]
+        ) = query.getSameSlabOverrideEarnings(user);
+    }
+
+    function _buildWalletSummary(
+        address user
+    ) internal view returns (WalletSummary memory wallet) {
+        IOceanViewLegacy.WalletPanel memory panel = legacy.getWalletPanel(user);
+        uint256 safeRama = query.getSafeWalletBalance(user);
+        if (safeRama == 0) {
+            safeRama = panel.safeRama;
+        }
+        wallet.safeWalletRamaWei = safeRama;
+        wallet.safeWalletUsdMicro = _ramaToUsd(safeRama);
+        wallet.lifetimeRoiUsdMicro = panel.lifetimeRoiUsd;
+
+        uint256 pendingGrowth = query.getAccruedGrowth(user);
+        wallet.pendingGrowthRamaWei = pendingGrowth;
+        wallet.pendingGrowthUsdMicro = _ramaToUsd(pendingGrowth);
+    }
+
+    function _buildPortfolioCards(
+        address user
+    ) internal view returns (PortfolioCard[] memory cards) {
+        IOceanViewLegacy.PortfolioSummary[] memory base = legacy
+            .getPortfolioSummaries(user);
+        cards = new PortfolioCard[](base.length);
+        for (uint256 i = 0; i < base.length; i++) {
+            uint256 pid = base[i].pid;
+            cards[i].pid = pid;
+            cards[i].principalRamaWei = base[i].principalRama;
+            cards[i].principalUsdMicro = base[i].principalUSD;
+            cards[i].capRamaWei = base[i].capRama;
+            cards[i].capUsdMicro = _ramaToUsd(base[i].capRama);
+            cards[i].creditedRamaWei = base[i].creditedRama;
+            cards[i].creditedUsdMicro = _ramaToUsd(base[i].creditedRama);
+            cards[i].capPct = base[i].capPct;
+            cards[i].booster = base[i].booster;
+            cards[i].tier = base[i].tier;
+            cards[i].dailyRateWad = query.getDailyGrowthRate(pid);
+            cards[i].active = base[i].active;
+            cards[i].createdAt = base[i].createdAt;
+            cards[i].frozenUntil = base[i].frozenUntil;
+            cards[i].capProgressBps = query.getPortfolioCapProgress(pid);
+        }
+    }
+
+    function _tryQueryUint(
+        bytes memory payload
+    ) internal view returns (uint256 value) {
+        (bool ok, bytes memory data) = address(query).staticcall(payload);
+        if (ok && data.length >= 32) {
+            value = abi.decode(data, (uint256));
+        }
+    }
+
+    function _ramaToUsd(uint256 ramaWei) internal view returns (uint256) {
+        if (ramaWei == 0) return 0;
+        address oracle = cfg.priceOracle();
+        if (oracle == address(0)) return 0;
+        (bool ok, bytes memory data) = oracle.staticcall(
+            abi.encodeWithSelector(IRamaOracle.ramaToUSD.selector, ramaWei)
+        );
+        if (!ok || data.length == 0) return 0;
+        return abi.decode(data, (uint256));
+    }
+}
