@@ -1,11 +1,12 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Wallet, TrendingUp, Users, Award, Trophy, Gift, Vault, History, Info, Settings, FileDown, LogOut, Presentation, BookOpen, Waves } from 'lucide-react';
+import { LayoutDashboard, Wallet, TrendingUp, Users, Award, Trophy, Gift, Vault, History, Info, Settings, FileDown, LogOut, Presentation, BookOpen, Waves, DollarSign } from 'lucide-react';
 import { generateOceanDefiPDF } from '../utils/generatePDF';
 
 const mainNavItems = [
   { path: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { path: '/dashboard/portfolio', label: 'Portfolio', icon: Wallet },
   { path: '/dashboard/stake', label: 'Stake & Invest', icon: Wallet },
+  { path: '/dashboard/accrued', label: 'Accrued Rewards', icon: DollarSign },
   { path: '/dashboard/earnings', label: 'Claim Earnings', icon: TrendingUp },
 ];
 

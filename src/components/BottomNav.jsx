@@ -1,10 +1,10 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Wallet, TrendingUp, MoreHorizontal } from 'lucide-react';
+import { LayoutDashboard, Wallet, TrendingUp, MoreHorizontal, DollarSign } from 'lucide-react';
 
 const navItems = [
   { path: '/dashboard', label: 'Home', icon: LayoutDashboard },
   { path: '/dashboard/portfolio', label: 'Portfolio', icon: Wallet },
-  { path: '/dashboard/stake', label: 'Stake', icon: Wallet },
+  { path: '/dashboard/accrued', label: 'Accrued', icon: DollarSign },
   { path: '/dashboard/earnings', label: 'Earnings', icon: TrendingUp },
 ];
 

@@ -5,6 +5,7 @@ import ScrollToTop from './components/ScrollToTop';
 import Dashboard from './pages/Dashboard';
 import PortfolioOverview from './pages/PortfolioOverview';
 import StakeInvest from './pages/StakeInvest';
+import AccruedRewards from './pages/AccruedRewards';
 import ClaimEarnings from './pages/ClaimEarnings';
 import TeamNetwork from './pages/TeamNetwork';
 import SlabIncome from './pages/SlabIncome';
@@ -56,6 +57,7 @@ const Approute = () => {
           <Route index element={<Dashboard />} />
           <Route path="portfolio" element={<PortfolioOverview />} />
           <Route path="stake" element={<StakeInvest />} />
+          <Route path="accrued" element={<AccruedRewards />} />
           <Route path="earnings" element={<ClaimEarnings />} />
           <Route path="team" element={<TeamNetwork />} />
           <Route path="slab" element={<SlabIncome />} />
